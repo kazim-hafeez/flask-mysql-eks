@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      flask: web
+  template:
+    metadata:
+      labels:
+        flask: web
+    spec:
+      containers:
+      - name: flask
+        image: salmanilyas/flask_image:sql1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 500m
+            memory: "800Mi"
+          requests:
+            cpu: 200m
+            memory: "500Mi"
+        env:
+        - name: host
+          value: sql-entrypoint
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-entrypoint
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    flask: web
+  ports:
+  - port: 5011
+

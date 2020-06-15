@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      mysql: db
+  template:
+    metadata:
+      labels:
+        mysql: db
+    spec:
+      containers:
+      - name: mysql-cont
+        image: mysql:latest
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: '1234567'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sql-entrypoint
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    mysql: db
+  ports:
+  - port: 3306
+    targetPort: 3306
